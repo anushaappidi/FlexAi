@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UserPreferences, WorkoutPlan } from './types';
-import { generateInitialWorkout, updateWorkoutPlan } from './services/gemini';
+import { generateInitialWorkout, updateWorkoutPlan, parseWorkoutFromText } from './services/gemini';
 import { PreferenceForm } from './components/PreferenceForm';
 import { WorkoutDisplay } from './components/WorkoutDisplay';
 import { ChatInterface } from './components/ChatInterface';
@@ -19,6 +19,19 @@ const App: React.FC = () => {
       setWorkoutPlan(plan);
     } catch (err) {
       setError("Failed to generate workout. Please check your API key or try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleImportWorkout = async (text: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const plan = await parseWorkoutFromText(text);
+      setWorkoutPlan(plan);
+    } catch (err) {
+      setError("Failed to process your text. Please try again or check the format.");
     } finally {
       setIsLoading(false);
     }
@@ -79,7 +92,11 @@ const App: React.FC = () => {
 
         {!workoutPlan ? (
           <div className="flex flex-col items-center justify-center min-h-[70vh]">
-            <PreferenceForm onSubmit={handleCreateWorkout} isLoading={isLoading} />
+            <PreferenceForm 
+                onSubmit={handleCreateWorkout} 
+                onImport={handleImportWorkout}
+                isLoading={isLoading} 
+            />
           </div>
         ) : (
           <div className="relative">

@@ -75,6 +75,46 @@ export const generateInitialWorkout = async (prefs: UserPreferences): Promise<Wo
   }
 };
 
+export const parseWorkoutFromText = async (text: string): Promise<WorkoutPlan> => {
+  const prompt = `
+    The user has pasted a workout routine (raw text format). Your goal is to convert this unstructured text into a structured JSON WorkoutPlan.
+
+    Input Text:
+    """
+    ${text}
+    """
+
+    Instructions:
+    1. Parse the text to extract the workout structure (exercises, sets, reps).
+    2. Map the content to the required JSON schema.
+    3. CRITICAL: For EVERY exercise identified, you MUST generate:
+       - 'instructions': A clear, brief description of how to perform the movement correctly. If the text provides cues, incorporate them. If not, generate standard professional form instructions.
+       - 'videoSearchTerm': A specific string to search YouTube for a high-quality demonstration (e.g., "Dumbbell Floor Press Form").
+    4. Infer sets, reps, and rest if implied or standard defaults if missing.
+    5. If there is a warm-up section, include those as exercises but note them as "Warm-up" in the notes or muscle group field.
+    6. Generate a title and description based on the content if not explicitly stated.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: workoutSchema,
+        systemInstruction: "You are an intelligent fitness assistant that parses workout text into structured data. You are an expert at explaining exercise form.",
+      },
+    });
+
+    const result = response.text;
+    if (!result) throw new Error("No response from AI");
+    return JSON.parse(result) as WorkoutPlan;
+  } catch (error) {
+    console.error("Gemini parsing error:", error);
+    throw error;
+  }
+};
+
 export const updateWorkoutPlan = async (currentPlan: WorkoutPlan, instruction: string): Promise<WorkoutPlan> => {
   const prompt = `
     Here is the current workout plan JSON:
