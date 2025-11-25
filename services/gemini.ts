@@ -15,8 +15,10 @@ const exerciseSchema = {
     rest: { type: Type.STRING, description: "Rest period, e.g., '60s' or '90s'" },
     notes: { type: Type.STRING, description: "Form cues or tempo instructions" },
     muscleGroup: { type: Type.STRING, description: "Primary muscle worked" },
+    instructions: { type: Type.STRING, description: "Concise step-by-step instructions on how to perform the exercise." },
+    videoSearchTerm: { type: Type.STRING, description: "Specific search term for YouTube to find a demonstration (e.g. 'Barbell Squat Form')." },
   },
-  required: ["id", "name", "sets", "reps", "rest", "notes", "muscleGroup"],
+  required: ["id", "name", "sets", "reps", "rest", "notes", "muscleGroup", "instructions", "videoSearchTerm"],
 };
 
 const workoutSchema = {
@@ -50,6 +52,7 @@ export const generateInitialWorkout = async (prefs: UserPreferences): Promise<Wo
     - Additional Notes: ${prefs.notes || "None"}
 
     Ensure the workout fits the time constraint. Be specific with sets and reps.
+    Include concise instructions for each exercise and a specific search term to find a video demonstration on YouTube.
   `;
 
   try {
@@ -82,8 +85,9 @@ export const updateWorkoutPlan = async (currentPlan: WorkoutPlan, instruction: s
 
     Please update the JSON structure to reflect these changes. 
     Maintain the overall structure and ensure the workout remains balanced if possible.
-    If the user asks to swap an exercise, provide a suitable alternative.
+    If the user asks to swap an exercise, provide a suitable alternative with new instructions and video search term.
     If the user says it's too hard, reduce volume or complexity.
+    Ensure every exercise has 'instructions' and 'videoSearchTerm'.
   `;
 
   try {

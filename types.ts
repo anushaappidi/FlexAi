@@ -19,6 +19,8 @@ export interface Exercise {
   rest: string;
   notes: string;
   muscleGroup: string;
+  instructions: string;
+  videoSearchTerm: string;
 }
 
 export interface WorkoutPlan {

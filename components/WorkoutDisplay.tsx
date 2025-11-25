@@ -1,6 +1,6 @@
 import React from 'react';
 import { WorkoutPlan } from '../types';
-import { Clock, BarChart3, Info, Check, PlayCircle } from 'lucide-react';
+import { Clock, BarChart3, Info, Check, PlayCircle, Youtube, ExternalLink } from 'lucide-react';
 
 interface Props {
   plan: WorkoutPlan;
@@ -43,10 +43,10 @@ export const WorkoutDisplay: React.FC<Props> = ({ plan }) => {
             key={exercise.id} 
             className="group bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-2xl p-6 transition-all duration-300 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-900/10"
           >
-            <div className="flex flex-col md:flex-row gap-4 md:items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-700 text-emerald-400 font-bold text-sm">
+            <div className="flex flex-col md:flex-row gap-6 md:items-start justify-between">
+              <div className="flex-1 space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-700 text-emerald-400 font-bold text-sm shrink-0">
                     {index + 1}
                   </span>
                   <h3 className="text-xl font-bold text-white group-hover:text-emerald-300 transition-colors">
@@ -54,7 +54,8 @@ export const WorkoutDisplay: React.FC<Props> = ({ plan }) => {
                   </h3>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-2 mt-4">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-3 gap-2">
                     <div className="bg-slate-900/50 rounded-lg p-2 text-center border border-slate-700">
                         <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Sets</p>
                         <p className="text-lg font-semibold text-white">{exercise.sets}</p>
@@ -68,9 +69,17 @@ export const WorkoutDisplay: React.FC<Props> = ({ plan }) => {
                         <p className="text-lg font-semibold text-white">{exercise.rest}</p>
                     </div>
                 </div>
+
+                {/* Instructions */}
+                <div className="bg-slate-900/30 rounded-xl p-4 border border-slate-700/50">
+                    <p className="text-sm text-slate-300 leading-relaxed">
+                        <span className="text-emerald-400 font-medium mr-2">How to:</span>
+                        {exercise.instructions || "Follow standard form for this exercise."}
+                    </p>
+                </div>
               </div>
 
-              <div className="md:w-1/3 mt-4 md:mt-0 md:border-l md:border-slate-700 md:pl-6">
+              <div className="md:w-1/3 flex flex-col justify-between gap-4">
                  <div className="space-y-3">
                     <div className="flex items-start gap-2 text-sm text-slate-400">
                         <Info className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
@@ -81,6 +90,18 @@ export const WorkoutDisplay: React.FC<Props> = ({ plan }) => {
                         {exercise.muscleGroup}
                     </div>
                  </div>
+
+                 {/* Video Link Button */}
+                 <a 
+                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.videoSearchTerm || exercise.name + " form")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-red-600/10 hover:bg-red-600/20 text-red-400 hover:text-red-300 border border-red-600/30 rounded-xl transition-all font-medium text-sm group/btn"
+                 >
+                    <Youtube className="w-4 h-4 transition-transform group-hover/btn:scale-110" />
+                    Watch Demo
+                    <ExternalLink className="w-3 h-3 opacity-50 ml-1" />
+                 </a>
               </div>
             </div>
           </div>
